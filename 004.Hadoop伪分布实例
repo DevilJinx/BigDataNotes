@@ -1,0 +1,45 @@
+Hadoop伪分布式实例
+    cd /opt/software/hadoop-2.8.1
+    ./bin/hdfs dfs -mkdir -p /user/root
+    ./bin/hdfs dfs -mkdir /user/root/input    <!--将 ./etc/hadoop 中的 xml 文件作为输入文件复制到分布式文件系统中-->
+    ./bin/hdfs dfs -put ./etc/hadoop/*.xml /user/root/input
+    ./bin/hdfs dfs -ls /user/root/input    <!--查看 HDFS 中的文件列表-->
+
+伪分布式运行 MapReduce 作业的方式跟单机模式相同，区别在于伪分布式读取的是HDFS中的文件（可以将单机步骤中创建的本地 input 文件夹，输出结果 output 文件夹都删掉来验证这一点）
+    ./bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar grep input output 'dfs[a-z.]+'
+    ./bin/hdfs dfs -cat /user/root/output/*
+
+将运行结果取回到本地：
+    rm -r ./output    # 先删除本地的 output 文件夹（如果存在）
+    ./bin/hdfs dfs -get output ./output     # 将 HDFS 上的 output 文件夹拷贝到本机
+    cat ./output/*
+Hadoop 运行程序时，输出目录不能存在，否则会提示错误 “org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://localhost:9000/user/hadoop/output already exists” ，因此若要再次执行，需要执行如下命令删除 output 文件夹:
+    ./bin/hdfs dfs -rm -r output    # 删除 output 文件夹
+    
+启动YARN：（伪分布式不启动YARN也可以，一般不会影响程序执行）
+修改配置文件 mapred-site.xml，这边需要先进行重命名：
+    mv ./etc/hadoop/mapred-site.xml.template ./etc/hadoop/mapred-site.xml
+    vi ./etc/hadoop/mapred-site.xml
+        <configuration>
+            <property>
+                <name>mapreduce.framework.name</name>
+                <value>yarn</value>
+            </property>
+        </configuration>
+    vi ./etc/hadoop/yarn-site.xml
+        <configuration>
+            <property>
+                <name>yarn.nodemanager.aux-services</name>
+                <value>mapreduce_shuffle</value>
+            </property>
+        </configuration>
+启动YARN：
+    ./sbin/start-dfs.sh
+    ./sbin/start-yarn.sh      $ 启动YARN
+    ./sbin/mr-jobhistory-daemon.sh start historyserver  # 开启历史服务器，才能在Web中查看任务运行情况
+    
+不启动 YARN 需重命名 mapred-site.xml
+    如果不想启动 YARN，务必把配置文件 mapred-site.xml 重命名，改成 mapred-site.xml.template，需要用时改回来就行。否则在该配置文件存在，而未开启 YARN 的情况下，运行程序会提示 “Retrying connect to server: 0.0.0.0/0.0.0.0:8032” 的错误，这也是为何该配置文件初始文件名为 mapred-site.xml.template。
+    关闭 YARN 的脚本如下：
+        ./sbin/stop-yarn.sh
+        ./sbin/mr-jobhistory-daemon.sh stop historyserver
