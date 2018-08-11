@@ -1,0 +1,71 @@
+CentOS7服务器搭建
+使用root登录系统
+1、设置静态IP：
+    查询MAC：ip addr
+    查询UUID：nmcli con show
+
+vi /etc/sysconfig/network-script/ifcfg-ens33
+    TYPE="Ethernet"
+    BOOTPROTO="static"
+    DEFROUTE="yes"
+    PEERDNS="yes"
+    PEERROUTES="yes"
+    IPV4_FAILURE_FATAL="no"
+    IPV6INIT="yes"
+    IPV6_AUTOCONF="yes"
+    IPV6_DEFROUTE="yes"
+    IPV6_PEERDNS="yes"
+    IPV6_PEERROUTES="yes"
+    IPV6_FAILURE_FATAL="no"
+    IPV6_ADDR_GEN_MODE="stable-privacy"
+    NAME="ens33"
+    UUID="1f0d2b8c-436b-41e6-b7f7-e88deefaff49"
+    DEVICE="ens33"<!--网络名称-->
+    ONBOOT="yes"
+    IPADDR=10.10.103.235<!--静态IP地址-->
+    NETMASK=255.255.255.0<!--子网掩码-->
+    GATEWAY=10.10.103.1<!--网关-->
+    HWADDR=00:0c:29:18:8b:4e<!--MAC地址-->
+    NM_CONTROLLED=no
+    DNS1=119.29.29.29
+    DNS2=182.254.116.116
+
+2、service network restart
+
+3、安装ifconfig：yum install net-tools
+
+4、安装mysql（rpm包安装）
+（1）检查系统是否装有mysql：rpm -qa | grep mysql
+    返回空值，说明没有
+（2）安装mysql的repo源：
+    wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+（3）安装mysql-community-release-el7-5.noarch.rpm：
+    rpm -ivh mysql-community-release-el7-5.noarch.rpm
+（4）安装mysql：
+    yum install mysql-server
+    （安装后没有密码，需要设置）
+（5）重置密码：
+    a.登录：mysql -u root
+    登录时报错：ERROR 2002 (HY000): Can’t connect to local MySQL server through socket ‘/var/lib/mysql/mysql.sock’ (2)，原因是/var/lib/mysql访问权限问题，把/var/lib/mysql的拥有者改为当前用户：
+        chown root /var/lib/mysql
+        ll
+（6）重启服务：service mysqld restart
+（7）登录重置密码：
+  mysql -u root -p
+  mysql > use mysql;
+  mysql > update user set password=password('deviljinx');
+  mysql > exit;
+（8）重启服务器生效：service mysqld restart
+（9）为root添加远程连接的能力，链接密码为root：
+  mysql > GRANT ALL　PRIVILEGES ON *.* TO root@"%" IDENTIFIED BY "root";
+（10）查询数据库编码格式，确保是UTF-8：
+    show variables like "%char%";
+    set names utf8;
+（11）测试数据库数据：
+    进入数据库：use test;
+    导入sql脚本：source test.sql;
+（12）开放2333端口号（可自行选择端口号）
+    firewall-cmd --zone=public --add-port=2333/tcp --permanent
+    firewall-cmd --reload
+（13）使用ssh工具连接服务器，用户名为root，密码为系统密码
+
