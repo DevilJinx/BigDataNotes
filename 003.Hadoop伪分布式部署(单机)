@@ -1,0 +1,75 @@
+Hadoop伪分布式部署(单机)
+1、设置主机名称：
+    hostname
+    hostnamectl set-hostname bigdata  <!--设置主机名为bigdata-->
+    hostname
+2、添加环境变量：
+    export HADOOP_HOME=/opt/software/hadoop-2.8.1
+    export HADOOP_INSTALL=$HADOOP_HOME
+    export HADOOP_MAPRED_HOME=$HADOOP_HOME
+    export HADOOP_COMMON_HOME=$HADOOP_HOME
+    export HADOOP_HDFS_HOME=$HADOOP_HOME
+    export YARN_HOME=$HADOOP_HOME
+    export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+    export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+3、解压并启动hdfs：
+    cd /opt/software/hadoop-2.8.1-src/hadoop-dist/target
+    mv hadoop-2.8.1.tar.gz /opt/software/
+    cd /opt/software
+    tar -xvzf hadoop-2.8.1.tar.gz
+    vi /etc/profile
+        export HADOOP_HOME=/opt/software/hadoop-2.8.1
+        export PATH=$HADOOP_HOME/bin:$PATH
+    source /etc/profile
+    cd ~  <!--配置免密登录开始-->
+    rm -rf .ssh
+    ssh-keygen  <!--回车三次不输入任何字符-->
+    cd .ssh/
+    cat id_rsa.pub >> authorized_keys  <!--免密配置结束-->
+    cd /opt/software/hadoop-2.8.1/etc/hadoop
+    echo $JAVA_HOME
+    vi hadoop-env.sh
+        export JAVA_HOME=/usr/local/java/jdk1.8
+    cd /opt/software/hadoop-2.8.1/sbin
+    hdfs namenode -format  <!--格式化hdfs，否则namenode无法启动-->
+    ./start-dfs.sh
+4、修改配置文件
+    cd /opt/software/hadoop-2.8.1/sbin
+    ./stop-dfs.sh  <!--停止dfs-->
+    cd /opt/software/hadoop-2.8.1/etc/hadoop
+    vi core-site.xml
+        <configuration>
+            <property>
+                <name>hadoop.tmp.dir</name>
+                <value>file:/usr/local/hadoop/tmp</value>
+                <description>Abase for other temporary directories.</description>
+            </property>
+            <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://localhost:9000</value>
+            </property>
+        </configuration>
+    vi hdfs-site.xml  
+        <configuration>
+            <property>
+                <name>dfs.replication</name>
+                <value>1</value>
+            </property>
+            <property>
+                <name>dfs.namenode.name.dir</name>
+                <value>file:/usr/local/hadoop/tmp/dfs/name</value>
+            </property>
+            <property>
+                <name>dfs.datanode.data.dir</name>
+                <value>file:/usr/local/hadoop/tmp/dfs/data</value>
+            </property>
+        </configuration>
+5、执行NameNode格式化：
+    hdfs namenode -format  <!--格式化hdfs-->
+        看到 “successfully formatted” 和 “Exitting with status 0” 的提示即为成功。
+    接着开启NaneNode和DataNode守护进程：
+        ../../sbin/start-dfs.sh
+    通过命令 jps 来判断是否成功启动，若成功启动则会列出如下进程：“NameNode”、”DataNode”和SecondaryNameNode（如果SecondaryNameNode没有启动，请运行sbin/stop-dfs.sh关闭进程，然后再次尝试启动尝试）。如果没有NameNode或 DataNode ，那就是配置不成功，请仔细检查之前步骤，或通过查看启动日志排查原因。
+    若不出现Datanode，则：rm -rf /usr/local/hadoop/tmp/
+6、浏览器输入http://localhost:50070/
+
