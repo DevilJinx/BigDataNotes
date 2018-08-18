@@ -60,6 +60,15 @@ vi /etc/hosts
 
 master:
 cd /opt/software/hadoop-2.8.1/etc/hadoop
+
+vi core-site.xml
+<configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://master:9000</value>
+    </property>
+</configuration>
+
 vi hdfs-site.xml
 <configuration>
     <property>
