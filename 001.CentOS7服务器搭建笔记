@@ -1,9 +1,9 @@
-CentOS7服务器搭建
+CentOS7服务器搭建笔记
 使用root登录系统
 1、设置静态IP：
     查询MAC：ip addr
     查询UUID：nmcli con show
-
+    
 vi /etc/sysconfig/network-script/ifcfg-ens33
     TYPE="Ethernet"
     BOOTPROTO="static"
@@ -18,21 +18,21 @@ vi /etc/sysconfig/network-script/ifcfg-ens33
     IPV6_PEERROUTES="yes"
     IPV6_FAILURE_FATAL="no"
     IPV6_ADDR_GEN_MODE="stable-privacy"
-    NAME="ens33"
-    UUID="1f0d2b8c-436b-41e6-b7f7-e88deefaff49"
-    DEVICE="ens33"<!--网络名称-->
+    NAME="eth0"
+    UUID="db133ac2-4ae3-4845-ba29-1d36cdc3272c"
+    DEVICE="eth0"<!--网络名称-->
     ONBOOT="yes"
-    IPADDR=10.10.103.235<!--静态IP地址-->
+    IPADDR=10.211.55.23<!--静态IP地址-->
     NETMASK=255.255.255.0<!--子网掩码-->
-    GATEWAY=10.10.103.1<!--网关-->
-    HWADDR=00:0c:29:18:8b:4e<!--MAC地址-->
+    GATEWAY=10.211.55.1<!--网关-->
+    HWADDR=00:1c:42:c1:a7:40<!--MAC地址-->
     NM_CONTROLLED=no
     DNS1=119.29.29.29
     DNS2=182.254.116.116
 
 2、service network restart
 
-3、安装ifconfig：yum install net-tools
+<!--3、安装ifconfig：yum install net-tools-->
 
 4、安装mysql（rpm包安装）
 （1）检查系统是否装有mysql：rpm -qa | grep mysql
@@ -53,7 +53,7 @@ vi /etc/sysconfig/network-script/ifcfg-ens33
 （7）登录重置密码：
   mysql -u root -p
   mysql > use mysql;
-  mysql > update user set password=password('deviljinx');
+  mysql > update user set password=password('DevilJinx940614');
   mysql > exit;
 （8）重启服务器生效：service mysqld restart
 （9）为root添加远程连接的能力，链接密码为root：
@@ -68,4 +68,3 @@ vi /etc/sysconfig/network-script/ifcfg-ens33
     firewall-cmd --zone=public --add-port=2333/tcp --permanent
     firewall-cmd --reload
 （13）使用ssh工具连接服务器，用户名为root，密码为系统密码
-

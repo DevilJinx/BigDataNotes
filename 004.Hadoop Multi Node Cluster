@@ -1,0 +1,145 @@
+Hadoop Multi Node Cluster
+
+data1：
+cd /opt/software/hadoop-2.8.1/etc/hadoop
+vi core-site.xml
+<configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://themachine:9000</value>
+    </property>
+</configuration>
+vi yarn-site.xml
+<configuration>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+        <value>org.apache.hadoop.mapred.shuffleHandler</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>themachine:8025</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>themachine:8030</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>themachine:8050</value>
+    </property>
+</configuration>
+vi mapred-site.xml
+<configuration>
+    <property>
+        <name>mapred.job.tracker</name>
+        <value>themachine:54311</value>
+    </property>
+</configuration>
+vi hdfs-site.xml
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <name>dfs.namenode.data.dir</name>
+        <value>file:/usr/local/hadoop/hadoop_data/hdfs/datanode</value>
+    </property>
+</configuration>
+reboot
+
+vi /etc/hosts
+10.37.129.11  data1 
+10.37.129.12  data2
+10.37.129.13  data3
+10.37.129.14  master
+
+master:
+cd /opt/software/hadoop-2.8.1/etc/hadoop
+vi hdfs-site.xml
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:/usr/local/hadoop/hadoop_data/hdfs/namenode</value>
+    </property>
+</configuration>
+
+vi masters
+master
+
+vi slaves
+data1
+data2
+data3
+
+reboot
+
+<!--设置ssh:
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+firewall-cmd --state
+reboot
+
+vi /etc/ssh/sshd_config
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedLeysFile     .ssh/authorized_keys
+service sshd restart
+
+ssh-keygen -t dsa
+cd .ssh/
+cat id_dsa.pub >>  authorized_keys
+chmod 644 authorized_keys
+ssh themachine
+
+在themachine上：
+cat ~/.ssh/id_dsa.pub | ssh root@data1 'cat - >> ~/.ssh/authorized_keys'
+cat ~/.ssh/id_dsa.pub | ssh root@data2 'cat - >> ~/.ssh/authorized_keys'
+cat ~/.ssh/id_dsa.pub | ssh root@data3 'cat - >> ~/.ssh/authorized_keys'
+-->
+
+master连接到data1、data2、data3创建HDFS目录：
+ssh data1
+rm -rf /usr/local/hadoop/hadoop_data/hdfs/
+mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
+chown -R root:root /usr/local/hadoop
+exit
+
+ssh data2
+rm -rf /usr/local/hadoop/hadoop_data/hdfs/
+mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
+chown -R root:root /usr/local/hadoop
+exit
+
+ssh data3
+rm -rf /usr/local/hadoop/hadoop_data/hdfs/
+mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
+chown -R root:root /usr/local/hadoop
+exit
+
+rm -rf /usr/local/hadoop/hadoop_data/hdfs
+mkdir -p /usr/local/hadoop/hadoop_data/hdfs/namenode
+chown -R root:root /usr/local/hadoop/
+
+hadoop namenode -format
+start-all.sh
+jps
+ssh data1
+jps
+exit
+
+打开Hadoop ResourceManager Web界面：
+http://master:8088/
+打开Namenode Web界面：
+http://master:50070/
+停止Hadoop Multi Node Cluster:
+stop-all.sh
+
