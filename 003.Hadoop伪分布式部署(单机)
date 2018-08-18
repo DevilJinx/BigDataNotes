@@ -13,6 +13,7 @@ export HADOOP_HDFS_HOME=$HADOOP_HOME
 export YARN_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+
 3、解压并启动hdfs：
 cd /opt/software/hadoop-2.8.1-src/hadoop-dist/target
 mv hadoop-2.8.1.tar.gz /opt/software/
@@ -31,6 +32,8 @@ cat id_rsa.pub >> authorized_keys  <!--免密配置结束-->
 cd /opt/software/hadoop-2.8.1/etc/hadoop
 vi hadoop-env.sh
 export JAVA_HOME=/usr/local/java/jdk1.8
+export HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native" 
+
 cd /opt/software/hadoop-2.8.1/sbin
 hdfs namenode -format  <!--格式化hdfs，否则namenode无法启动-->
 ./start-dfs.sh
@@ -96,3 +99,4 @@ chown root:root -R /usr/local/hadoop
     若不出现Datanode，则：rm -rf /usr/local/hadoop/tmp/
 6、浏览器输入http://localhost:8088/
 http://localhost:50070/
+
