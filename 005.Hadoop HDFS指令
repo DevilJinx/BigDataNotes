@@ -1,0 +1,99 @@
+Hadoop HDFS指令
+hadoop fs -mkdir    创建HDFS目录
+hadoop fs -ls       列出HDFS目录
+hadoop fs -copyFromLocal    使用-copyFromLocal复制本地(local)文件到HDFS
+hadoop fs -put      使用-put复制本地(local)文件到HDFS
+hadoop fs -cat      列出HDFS目录下的文件内容
+hadoop fs -copyToLocal      使用-copyToLocal将HDFS上的文件复制到本地
+hadoop fs -get      使用-get将HDFS上的文件复制到本地(local)
+hadoop fs -cp       复制HDFS文件
+hadoop fs -rm       删除HDFS文件
+
+一、启动Hadoop Multi-Node Cluster：
+start-all.sh
+
+二、创建与查看HDFS目录：
+1、创建user目录：hadoop fs -mkdir /user
+    在user目录下创建root子目录：hadoop fs -mkdir /user/root
+    在root目录下创建test子目录：hadoop fs -mkdir /user/root/test
+
+2、查看用户HDFS目录
+    查看之前创建的HDFS目录：hadoop fs -ls
+
+3、查看HDFS完整目录
+    查看HDFS根目录：hadoop fs -ls /
+    查看HDFS的/user目录：hadoop fs -ls /user
+    查看HDFS的/user/root目录：hadoop fs -ls /user/root
+
+4、查看所有HDFS子目录
+    一次查看所有子目录：hadoop fs -ls -R /
+
+5、一次创建所有HDFS子目录
+    创建多级HDFS目录：hadoop fs -mkdir -p /dir1/dir2/dir3
+    查看所有HDFS子目录：hadoop fs -ls -R /
+
+三、从本地计算机复制文件到HDFS：
+1、复制本地文件到HDFS
+    复制本地文件到HDFS的目录：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test
+    复制本地文件到HDFS的目录的test1.txt：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test/test1.txt
+    列出HDFS目录下的文件：hadoop fs -ls /user/root/test
+    
+2、列出HDFS目录下的文件
+    列出HDFS目录下的文件内容：hadoop fs -cat /user/root/test/README.txt
+    若文件大，可让其一页一页显示：hadoop fs -cat /user/root/test/README.txt | more
+
+3、复制重复文件到HDFS目录：
+    复制本地文件到HDFS的目录时，文件已经存在：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test（显示File exists）
+
+4、强制复制重复文件到HDFS目录：hadoop fs -copyFromLocal -f /opt/software/hadoop-2.8.1/README.txt /user/root/test
+
+5、复制多个本地文件到HDFS目录：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/NOTICE.txt /opt/software/hadoop-2.8.1/LICENSE.txt /user/root/test
+
+6、copyFromLocal复制目录到HDFS目录：
+    复制整个本地计算机的目录/opt/software/hadoop-2.8.1/etc到HDFS目录/user/root/test：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/etc /user/root/test
+    列出在HDFS目录下的文件：hadoop fs -ls /user/root/test
+    
+7、查看目录下的所有文件：
+    列出HDFS目录/user/root/test/etc下的所有文件：hadoop fs -ls -R /user/root/test/etc
+
+8、使用put复制文件到HDFS目录：
+    使用put复制文件到HDFS目录，会直接覆盖文件：hadoop fs -put /opt/software/hadoop-2.8.1/README.txt /user/root/test/test2.txt
+
+9、使用put命令接受stdin(标准输入)
+    将原本显示在屏幕上的内容存储到HDFS文件：echo abc | hadoop fs -put - /user/root/test/echoin.txt
+    显示在HDFS中echoin.txt文件的内容：hadoop fs -cat /user/root/test/echoin.txt
+
+10、使用put命令将本地目录的列表存储到HDFS文件
+    将本地目录的列表存储到HDFS文件：ls /opt/software/hadoop-2.8.1 | hadoop fs -put - /user/root/test/hadooplist.txt
+    显示HDFS中hadooplist.txt文件的内容：hadoop fs -cat /user/root/test/hadooplist.txt
+
+四、将HDFS上的文件复制到本地计算机
+1、将HDFS上的文件复制到本地计算机(local)
+    在本地计算机创建test测试目录：mkdir test
+    切换到test目录：cd test
+    将HDFS的文件复制到本地计算机：hadoop fs -copyToLocal /user/root/test/hadooplist.txt
+    查看本地目录：ll
+
+2、将HDFS上的目录复制到本地计算机
+    将整个HDFS上的目录复制到本地计算机：hadoop fs -copyToLocal /user/root/test/etc
+    
+3、hadoop fs -get复制到本地计算机(local)
+    将HDFS上的文件复制到本地计算机：hadoop fs -get /user/root/test/README.txt localREADME.txt
+
+五、复制与删除HDFS
+1、复制HDFS文件
+    在HDFS上创建测试目录/user/root/test/temp：hadoop fs -mkdir /user/root/test/temp
+    复制HDFS文件到HDFS测试目录：hadoop fs -cp /user/root/test/README.txt /user/root/test/temp
+    查看HDFS测试目录：hadoop fs -ls /user/root/test/temp
+
+2、删除HDFS文件
+    先查看准备要被删除的文件：hadoop fs -ls /user/root/test
+    删除HDFS文件：hadoop fs -rm /user/root/test/test2.txt
+
+3、删除HDFS目录
+    查看准备要被删除的HDFS目录：hadoop fs -ls /user/root/test
+    删除HDFS目录：hadoop fs -rm -R /user/root/test/etc
+
+六、在Hadoop HDFS Web用户界面浏览HDFS
+Hadoop HDFS Web界面网址：http://master:50070
+
