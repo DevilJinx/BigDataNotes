@@ -6,9 +6,10 @@ vi core-site.xml
 <configuration>
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://themachine:9000</value>
+        <value>hdfs://master:9000</value>
     </property>
 </configuration>
+
 vi yarn-site.xml
 <configuration>
     <property>
@@ -21,24 +22,26 @@ vi yarn-site.xml
     </property>
     <property>
         <name>yarn.resourcemanager.resource-tracker.address</name>
-        <value>themachine:8025</value>
+        <value>master:8025</value>
     </property>
     <property>
         <name>yarn.resourcemanager.scheduler.address</name>
-        <value>themachine:8030</value>
+        <value>master:8030</value>
     </property>
     <property>
         <name>yarn.resourcemanager.address</name>
-        <value>themachine:8050</value>
+        <value>master:8050</value>
     </property>
 </configuration>
+
 vi mapred-site.xml
 <configuration>
     <property>
         <name>mapred.job.tracker</name>
-        <value>themachine:54311</value>
+        <value>master:54311</value>
     </property>
 </configuration>
+
 vi hdfs-site.xml
 <configuration>
     <property>
@@ -46,17 +49,18 @@ vi hdfs-site.xml
         <value>3</value>
     </property>
     <property>
-        <name>dfs.namenode.data.dir</name>
+        <name>dfs.datanode.data.dir</name>
         <value>file:/usr/local/hadoop/hadoop_data/hdfs/datanode</value>
     </property>
 </configuration>
-reboot
 
 vi /etc/hosts
 10.37.129.11  data1 
 10.37.129.12  data2
 10.37.129.13  data3
 10.37.129.14  master
+
+将data1复制到data2、data3、master，设置静态IP
 
 master:
 cd /opt/software/hadoop-2.8.1/etc/hadoop
@@ -115,6 +119,12 @@ cat ~/.ssh/id_dsa.pub | ssh root@data2 'cat - >> ~/.ssh/authorized_keys'
 cat ~/.ssh/id_dsa.pub | ssh root@data3 'cat - >> ~/.ssh/authorized_keys'
 -->
 
+master、data1、data2、data3关闭防火墙：
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+firewall-cmd --state
+reboot
+
 master连接到data1、data2、data3创建HDFS目录：
 ssh data1
 rm -rf /usr/local/hadoop/hadoop_data/hdfs/
@@ -138,7 +148,7 @@ rm -rf /usr/local/hadoop/hadoop_data/hdfs
 mkdir -p /usr/local/hadoop/hadoop_data/hdfs/namenode
 chown -R root:root /usr/local/hadoop/
 
-hadoop namenode -format
+hdfs namenode -format
 start-all.sh
 jps
 ssh data1
