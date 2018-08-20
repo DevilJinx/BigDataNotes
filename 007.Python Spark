@@ -1,0 +1,78 @@
+Python Spark:
+一、安装Scala：
+1、下载Scala：wget http://www.scala-lang.org/files/archive/scala-2.11.6.tgz
+2、解压缩Scala
+    解压缩scala-2.11.6.tgz到cala-2.11.6目录：tar xvf scala-2.11.6.tgz
+    把scala-2.11.6迁移到/usr/local目录：mv scala-2.11.6 /usr/local/scala
+3、Scala用户环境变量的设置：
+vi /etc/profile:
+#SCALA_PATH-----------------------
+export SCALA_HOME=/usr/local/scala
+export PATH=$PATH:$SCALA_HOME/bin
+
+source /etc/profile
+
+二、安装Spark:
+1、安装Spark：
+    下载Spark：wget https://archive.apache.org/dist/spark/spark-2.0.2/spark-2.0.2-bin-hadoop2.7.tgz
+    解压缩Spark到spark-2.0.2-bin-hadoop2.7目录：tar zxf spark-2.0.2-bin-hadoop2.7.tgz
+    把spark-2.0.2-bin-hadoop2.7目录移动到/usr/local/spark：mv spark-2.0.2-bin-hadoop2.7 /usr/local/spark
+2、用户环境变量设置：
+vi /etc/profile:
+#SPARK_PATH-----------------------
+export SPARK_HOME=/usr/local/spark
+export PATH=$PATH:$SPARK_HOME/bin
+
+source /etc/profile
+
+三、启动pyspark交互式界面：
+1、启动pyspark
+    进入Spark交互式界面：pyspark
+2、退出pyspark
+    离开pyspark交互式界面：exit()
+
+四、设置pyspark显示信息
+1、复制log4j模板文件
+    切换到spark配置文件目录：cd /usr/local/spark/conf
+    复制log4j模板文件到log4j.properties：cp log4j.properties.template log4j.properties
+2、设置log4j
+    vi log4j.properties:
+    将INFO改为WARN
+3、再次进入pyspark
+    pyspark
+    （信息少了很多，只列出重要部分信息）
+
+五、创建测试用的文本文件：
+1、复制LICENSE.txt
+    复制LICENSE.txt：cp /opt/software/hadoop-2.8.1/LICENSE.txt ~/wordcount/input/
+    ll ~/wordcount/input
+2、启动所有虚拟服务器
+3、进入master虚拟机，启动Hadoop Multi-Node Cluster
+    启动Hadoop Multi-Node Cluster：start-all.sh
+4、上传测试文件HDFS目录
+    在HDFS创建目录：hadoop fs -mkdir -p /user/root/wordcount/input
+    切换至~/wordcount/input数据文件目录：cd ~/wordcount/input
+    上传文本文件到HDFS：hadoop fs -copyFromLocal LICENSE.txt /user/root/wordcount/input
+    列出HDFS文件：hadoop fs -ls /user/root/wordcount/input
+
+六、本地运行pyspark程序
+1、进入spark
+    本地运行pyspark程序：pyspark --master local[4]
+2、查看当前的运行模式：sc.master
+3、读取本地文件
+    读取本地的文件：textFile=sc.textFile("file:/usr/local/spark/README.md")
+    显示项数：textFile.count()
+4、读取HDFS文件
+    读取HDFS文件：textFile=sc.textFile("hdfs://master:9000/user/root/wordcount/input/LICENSE.txt")
+    显示项数：textFile.count()
+5、退出pyspark：exit()
+
+七、在Hadoop YARN运行pyspark
+(预)解决spark运行时出现Neither spark.yarn.jars nor spark.yarn.archive is set：
+    在hdfs上创建目录：hadoop fs -mkdir -p /user/root/hadoop/spark_jars
+    上传spark的jars：hadoop fs -put /usr/local/spark/jars/* /user/root//hadoop/spark_jars/
+    修改spark-default.conf：park.yarn.jars=hdfs://master:9000/opt/spark/jars/* /home/hadoop/spark_jars/ 
+
+
+1、在Hadoop YARN运行pyspark
+    在Hadoop YARN运行pyspark：HADOOP_CONF_DIR=/opt/software/hadoop-2.8.1/etc/hadoop pyspark --master yarn --deploy-mode client
