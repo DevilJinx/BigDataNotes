@@ -13,6 +13,9 @@ hadoop fs -rm       删除HDFS文件
 start-all.sh
 
 二、创建与查看HDFS目录：
+(预备)解决 Unable to load native-hadoop library for your platform... using builtin-java classes where applicable：
+vi /opt/software/hadoop-2.8.1/etc/hadoop/hadoop-env.sh
+    export HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"  
 1、创建user目录：hadoop fs -mkdir /user
     在user目录下创建root子目录：hadoop fs -mkdir /user/root
     在root目录下创建test子目录：hadoop fs -mkdir /user/root/test

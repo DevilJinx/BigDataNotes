@@ -55,10 +55,11 @@ vi hdfs-site.xml
 </configuration>
 
 vi /etc/hosts
-10.37.129.11  data1 
-10.37.129.12  data2
-10.37.129.13  data3
-10.37.129.14  master
+10.37.129.18  data1
+10.37.129.19  data2
+10.37.129.20  data3 
+10.37.129.21  master       9f8b49d9-d9a1-3d9c-b6e8-8a442a7875d4
+00:1c:42:da:24:55
 
 将data1复制到data2、data3、master，设置静态IP
 

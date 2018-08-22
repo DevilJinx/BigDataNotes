@@ -70,9 +70,13 @@ source /etc/profile
 七、在Hadoop YARN运行pyspark
 (预)解决spark运行时出现Neither spark.yarn.jars nor spark.yarn.archive is set：
     在hdfs上创建目录：hadoop fs -mkdir -p /user/root/hadoop/spark_jars
-    上传spark的jars：hadoop fs -put /usr/local/spark/jars/* /user/root//hadoop/spark_jars/
-    修改spark-default.conf：park.yarn.jars=hdfs://master:9000/opt/spark/jars/* /home/hadoop/spark_jars/ 
+    上传spark的jars：hadoop fs -put /usr/local/spark/jars/* /user/root/hadoop/spark_jars/
+    修改spark-default.conf：park.yarn.jars=hdfs://master:9000/usr/local/spark/jars/* /user/root/hadoop/spark_jars/ 
 
 
 1、在Hadoop YARN运行pyspark
     在Hadoop YARN运行pyspark：HADOOP_CONF_DIR=/opt/software/hadoop-2.8.1/etc/hadoop pyspark --master yarn --deploy-mode client
+        其中：
+        设置Hadoop配置文件目录：HADOOP_CONF_DIR=/opt/software/hadoop-2.8.1/etc/hadoop
+        要运行的程序：pyspark
+        设置运行模式是YARN-client：--master yarn --deploy-mode client

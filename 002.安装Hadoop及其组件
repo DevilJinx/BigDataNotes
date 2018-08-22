@@ -41,7 +41,5 @@ yum install -y snappy snappy-devel bzip2 bzip2-devel lzo lzo-devel lzop autoconf
 7、编译hadoop：
     解压hadoop：
 tar -xzvf hadoop-2.8.1-src.tar.gz
-cd hadoop-2.8.1-src
+cd /opt/software/hadoop-2.8.1-src
 mvn clean package -Pdist,native -DskipTests -Dtar
-
-
