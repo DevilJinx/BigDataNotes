@@ -2,33 +2,35 @@ CentOS7服务器搭建笔记
 使用root登录系统
 1、设置静态IP：
     查询MAC：ip addr
+    00:1c:42:c4:76:0b
     查询UUID：nmcli con show
-    
+    91c8e147-cf06-4d42-9510-31d7b78ada1f
+    00:1c:42:98:ba:98
 vi /etc/sysconfig/network-script/ifcfg-ens33
-    TYPE="Ethernet"
-    BOOTPROTO="static"
-    DEFROUTE="yes"
-    PEERDNS="yes"
-    PEERROUTES="yes"
-    IPV4_FAILURE_FATAL="no"
-    IPV6INIT="yes"
-    IPV6_AUTOCONF="yes"
-    IPV6_DEFROUTE="yes"
-    IPV6_PEERDNS="yes"
-    IPV6_PEERROUTES="yes"
-    IPV6_FAILURE_FATAL="no"
-    IPV6_ADDR_GEN_MODE="stable-privacy"
-    NAME="eth0"
-    UUID="db133ac2-4ae3-4845-ba29-1d36cdc3272c"
-    DEVICE="eth0"<!--网络名称-->
-    ONBOOT="yes"
-    IPADDR=10.211.55.23<!--静态IP地址-->
-    NETMASK=255.255.255.0<!--子网掩码-->
-    GATEWAY=10.211.55.1<!--网关-->
-    HWADDR=00:1c:42:c1:a7:40<!--MAC地址-->
-    NM_CONTROLLED=no
-    DNS1=119.29.29.29
-    DNS2=182.254.116.116
+TYPE="Ethernet"
+BOOTPROTO="static"
+DEFROUTE="yes"
+PEERDNS="yes"
+PEERROUTES="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_PEERDNS="yes"
+IPV6_PEERROUTES="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="eth0"
+UUID="942e46e4-6175-45fd-9849-961e363f1475"
+DEVICE="eth0"<!--网络名称-->
+ONBOOT="yes"
+IPADDR=10.211.55.23<!--静态IP地址-->
+NETMASK=255.255.255.0<!--子网掩码-->
+GATEWAY=10.211.55.1<!--网关-->
+HWADDR=00:1c:42:c4:76:0b<!--MAC地址-->
+NM_CONTROLLED=no
+DNS1=119.29.29.29
+DNS2=182.254.116.116
 
 2、service network restart
 

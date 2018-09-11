@@ -13,9 +13,6 @@ hadoop fs -rm       删除HDFS文件
 start-all.sh
 
 二、创建与查看HDFS目录：
-(预备)解决 Unable to load native-hadoop library for your platform... using builtin-java classes where applicable：
-vi /opt/software/hadoop-2.8.1/etc/hadoop/hadoop-env.sh
-    export HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"  
 1、创建user目录：hadoop fs -mkdir /user
     在user目录下创建root子目录：hadoop fs -mkdir /user/root
     在root目录下创建test子目录：hadoop fs -mkdir /user/root/test
@@ -37,8 +34,8 @@ vi /opt/software/hadoop-2.8.1/etc/hadoop/hadoop-env.sh
 
 三、从本地计算机复制文件到HDFS：
 1、复制本地文件到HDFS
-    复制本地文件到HDFS的目录：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test
-    复制本地文件到HDFS的目录的test1.txt：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test/test1.txt
+    复制本地文件到HDFS的目录：hadoop fs -copyFromLocal /usr/local/hadoop/README.txt /user/root/test
+    复制本地文件到HDFS的目录的test1.txt：hadoop fs -copyFromLocal /usr/local/hadoop/README.txt /user/root/test/test1.txt
     列出HDFS目录下的文件：hadoop fs -ls /user/root/test
     
 2、列出HDFS目录下的文件
@@ -46,28 +43,28 @@ vi /opt/software/hadoop-2.8.1/etc/hadoop/hadoop-env.sh
     若文件大，可让其一页一页显示：hadoop fs -cat /user/root/test/README.txt | more
 
 3、复制重复文件到HDFS目录：
-    复制本地文件到HDFS的目录时，文件已经存在：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/README.txt /user/root/test（显示File exists）
+    复制本地文件到HDFS的目录时，文件已经存在：hadoop fs -copyFromLocal /usr/local/hadoop/README.txt /user/root/test（显示File exists）
 
-4、强制复制重复文件到HDFS目录：hadoop fs -copyFromLocal -f /opt/software/hadoop-2.8.1/README.txt /user/root/test
+4、强制复制重复文件到HDFS目录：hadoop fs -copyFromLocal -f /usr/local/hadoop/README.txt /user/root/test
 
-5、复制多个本地文件到HDFS目录：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/NOTICE.txt /opt/software/hadoop-2.8.1/LICENSE.txt /user/root/test
+5、复制多个本地文件到HDFS目录：hadoop fs -copyFromLocal /usr/local/hadoop/NOTICE.txt /usr/local/hadoop/LICENSE.txt /user/root/test
 
 6、copyFromLocal复制目录到HDFS目录：
-    复制整个本地计算机的目录/opt/software/hadoop-2.8.1/etc到HDFS目录/user/root/test：hadoop fs -copyFromLocal /opt/software/hadoop-2.8.1/etc /user/root/test
+    复制整个本地计算机的目录/usr/local/hadoop/etc到HDFS目录/user/root/test：hadoop fs -copyFromLocal /usr/local/hadoop/etc /user/root/test
     列出在HDFS目录下的文件：hadoop fs -ls /user/root/test
     
 7、查看目录下的所有文件：
     列出HDFS目录/user/root/test/etc下的所有文件：hadoop fs -ls -R /user/root/test/etc
 
 8、使用put复制文件到HDFS目录：
-    使用put复制文件到HDFS目录，会直接覆盖文件：hadoop fs -put /opt/software/hadoop-2.8.1/README.txt /user/root/test/test2.txt
+    使用put复制文件到HDFS目录，会直接覆盖文件：hadoop fs -put /usr/local/hadoop/README.txt /user/root/test/test2.txt
 
 9、使用put命令接受stdin(标准输入)
     将原本显示在屏幕上的内容存储到HDFS文件：echo abc | hadoop fs -put - /user/root/test/echoin.txt
     显示在HDFS中echoin.txt文件的内容：hadoop fs -cat /user/root/test/echoin.txt
 
 10、使用put命令将本地目录的列表存储到HDFS文件
-    将本地目录的列表存储到HDFS文件：ls /opt/software/hadoop-2.8.1 | hadoop fs -put - /user/root/test/hadooplist.txt
+    将本地目录的列表存储到HDFS文件：ls /usr/local/hadoop | hadoop fs -put - /user/root/test/hadooplist.txt
     显示HDFS中hadooplist.txt文件的内容：hadoop fs -cat /user/root/test/hadooplist.txt
 
 四、将HDFS上的文件复制到本地计算机

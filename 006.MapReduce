@@ -86,7 +86,7 @@ source /etc/profile
 
 三、创建测试文本文件：
 1、复制LICENSE.txt
-    切换到输入目录：cp /opt/software/hadoop-2.8.1/LICENSE.txt ~/wordcount/input
+    切换到输入目录：cp /usr/local/hadoop/LICENSE.txt ~/wordcount/input
     ll ~/wordcount/input
 
 2、启动所有虚拟服务器

@@ -14,7 +14,7 @@ source /etc/profile
 
 二、安装Spark:
 1、安装Spark：
-    下载Spark：wget https://archive.apache.org/dist/spark/spark-2.0.2/spark-2.0.2-bin-hadoop2.7.tgz
+    下载Spark：wget https://www.apache.org/dyn/closer.lua/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz
     解压缩Spark到spark-2.0.2-bin-hadoop2.7目录：tar zxf spark-2.0.2-bin-hadoop2.7.tgz
     把spark-2.0.2-bin-hadoop2.7目录移动到/usr/local/spark：mv spark-2.0.2-bin-hadoop2.7 /usr/local/spark
 2、用户环境变量设置：
@@ -30,6 +30,9 @@ source /etc/profile
     进入Spark交互式界面：pyspark
 2、退出pyspark
     离开pyspark交互式界面：exit()
+(解决NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable)
+vi /usr/local/spark/conf/spark_env.sh:
+    添加：export LD_LIBRARY_PATH="/usr/local/hadoop/lib/native/"
 
 四、设置pyspark显示信息
 1、复制log4j模板文件
@@ -44,7 +47,7 @@ source /etc/profile
 
 五、创建测试用的文本文件：
 1、复制LICENSE.txt
-    复制LICENSE.txt：cp /opt/software/hadoop-2.8.1/LICENSE.txt ~/wordcount/input/
+    复制LICENSE.txt：cp /usr/local/hadoop/LICENSE.txt ~/wordcount/input/
     ll ~/wordcount/input
 2、启动所有虚拟服务器
 3、进入master虚拟机，启动Hadoop Multi-Node Cluster
@@ -71,12 +74,15 @@ source /etc/profile
 (预)解决spark运行时出现Neither spark.yarn.jars nor spark.yarn.archive is set：
     在hdfs上创建目录：hadoop fs -mkdir -p /user/root/hadoop/spark_jars
     上传spark的jars：hadoop fs -put /usr/local/spark/jars/* /user/root/hadoop/spark_jars/
-    修改spark-default.conf：park.yarn.jars=hdfs://master:9000/usr/local/spark/jars/* /user/root/hadoop/spark_jars/ 
-
+    修改spark-default.conf：spark.yarn.jars=hdfs://master:9000/usr/local/spark/jars/* /user/root/hadoop/spark_jars/ 
 
 1、在Hadoop YARN运行pyspark
-    在Hadoop YARN运行pyspark：HADOOP_CONF_DIR=/opt/software/hadoop-2.8.1/etc/hadoop pyspark --master yarn --deploy-mode client
-        其中：
-        设置Hadoop配置文件目录：HADOOP_CONF_DIR=/opt/software/hadoop-2.8.1/etc/hadoop
+    在Hadoop YARN运行pyspark：HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop pyspark --master yarn --deploy-mode client
+        设置Hadoop配置文件目录：HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
         要运行的程序：pyspark
         设置运行模式是YARN-client：--master yarn --deploy-mode client
+2、查看当前的运行模式
+    sc.master
+3、读取HDFS文件
+    textFile=sc.textFile("hdfs://master:9000/user/root/wordcount/input/LICENSE.txt")
+    

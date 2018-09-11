@@ -48,38 +48,38 @@ cd /opt/software/hadoop-2.8.1/sbin
 cd /opt/software/hadoop-2.8.1/etc/hadoop
 vi core-site.xml
 <configuration>
-    <property>
-        <name>fs.default.name</name>
-        <value>hdfs://localhost:9000</value>
-    </property>
+<property>
+    <name>fs.default.name</name>
+    <value>hdfs://localhost:9000</value>
+</property>
 </configuration>
 
 vi yarn-site.xml
 <configuration>
-    <property>
-        <name>yarn.nodemanager.aux-services</name>
-        <value>mapreduce_shuffle</value>
-    </property>
-    <property>
-        <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
-        <value>org.apache.hadoop.mapred.shuffleHandler</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.resource-tracker.address</name>
-        <value>master:8025</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.scheduler.address</name>
-        <value>master:8030</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.address</name>
-        <value>master:8050</value>
-    </property>
-    <property>
-        <name>yarn.nodemanager.vmem-check-enabled</name>
-        <value>false</value>
-    </property>
+<property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+</property>
+<property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.shuffleHandler</value>
+</property>
+<property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>master:8025</value>
+</property>
+<property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>master:8030</value>
+</property>
+<property>
+    <name>yarn.resourcemanager.address</name>
+    <value>master:8050</value>
+</property>
+<property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+</property>
 </configuration>
 
 vi mapred-site.xml  
@@ -107,9 +107,9 @@ vi hdfs-site.xml
 </configuration>
 
 5、创建namenode、datanode目录
-mkdir -p /usr/local/hadoop/hadoop_data/hdfs/namenode
-mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
-chown root:root -R /usr/local/hadoop
+sudo mkdir -p /usr/local/hadoop/hadoop_data/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
+sudo chown root:root -R /usr/local/hadoop
 
 6、执行NameNode格式化：
     hadoop namenode -format  <!--格式化hdfs-->
