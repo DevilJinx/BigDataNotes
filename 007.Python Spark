@@ -15,7 +15,7 @@ source /etc/profile
 二、安装Spark:
 1、安装Spark：
     下载Spark：wget https://www.apache.org/dyn/closer.lua/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz
-    解压缩Spark到spark-2.0.2-bin-hadoop2.7目录：tar zxf spark-2.0.2-bin-hadoop2.7.tgz
+    解压缩Spark到spark-2.0.2-bin-hadoop2.7目录：tar zxf spark-2.0.0-bin-hadoop2.6.tgz
     把spark-2.0.2-bin-hadoop2.7目录移动到/usr/local/spark：mv spark-2.0.2-bin-hadoop2.7 /usr/local/spark
 2、用户环境变量设置：
 vi /etc/profile:
@@ -31,7 +31,7 @@ source /etc/profile
 2、退出pyspark
     离开pyspark交互式界面：exit()
 (解决NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable)
-vi /usr/local/spark/conf/spark_env.sh:
+vi /usr/local/spark/conf/spark-env.sh:
     添加：export LD_LIBRARY_PATH="/usr/local/hadoop/lib/native/"
 
 四、设置pyspark显示信息
@@ -85,4 +85,60 @@ vi /usr/local/spark/conf/spark_env.sh:
     sc.master
 3、读取HDFS文件
     textFile=sc.textFile("hdfs://master:9000/user/root/wordcount/input/LICENSE.txt")
-    
+    textFile.count()
+
+八、构建Spark Standalone Cluster运行环境
+1、编辑spark-env.sh：vi /usr/local/spark/conf/spark-env.sh
+    添加：
+export SPARK_MASTER_IP=master
+export SPARK_WORKER_CORES=1
+export SPARK_WORKER_MEMORY=512m
+export SPARK_WORKER_INSTANCES=4
+        其中：
+            设置master的IP或服务器名称：export SPARK_MASTER_IP=master
+            设置每个Worker使用的CPU核心：export SPARK_WORKER_CORES=1
+            设置每个Worker使用的内存：export SPARK_WORKER_MEMORY=512m
+            设置实例数：export SPARK_WORKER_INSTANCES=4
+2、将master的spark程序复制到data1
+ssh data1
+mkdir /usr/local/spark
+chown root:root /usr/local/spark
+exit
+scp -r /usr/local/spark root@data1:/usr/local
+3、将master的spark程序复制到data2
+ssh data2
+mkdir /usr/local/spark
+chown root:root /usr/local/spark
+exit
+scp -r /usr/local/spark root@data2:/usr/local
+4、将master的spark程序复制到data3
+ssh data3
+mkdir /usr/local/spark
+chown root:root /usr/local/spark
+exit
+scp -r /usr/local/spark root@data3:/usr/local
+5、编辑slaves文件
+    编辑slaves文件：vi /usr/local/spark/conf/slaves
+    输入：
+        data1
+        data2
+        data3
+
+九、在Spark Standalone运行pyspark
+1、启动Spark Standalone Cluster
+    启动Spark Standalone Cluster：/usr/local/spark/sbin/start-all.sh
+    分别启动master与slaves：
+        /usr/local/spark/sbin/start-master.sh
+        /usr/local/spark/sbin/start-slaves.sh
+2、在Spark Standalone运行pyspark
+    在Spark Standalone运行pyspark程序：pyspark --master spark://master:7077 --num-executors 1 --total-executor-cores 3 --executor-memory 512m
+3、查看当前的运行模式
+    sc.master
+4、读取本地文件
+    textFile=sc.textFile("file:/usr/local/spark/README.md")
+    textFile.count()
+5、读取HDFS文件
+    textFile=sc.textFile("hdfs://master:9000/user/root/wordcount/input/LICENSE.txt")
+    textFile.count()
+6、停止Spark Standalone Cluster
+    /usr/local/spark/sbin/stop-all.sh

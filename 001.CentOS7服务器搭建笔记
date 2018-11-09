@@ -59,7 +59,7 @@ DNS2=182.254.116.116
   mysql > exit;
 （8）重启服务器生效：service mysqld restart
 （9）为root添加远程连接的能力，链接密码为root：
-  mysql > GRANT ALL　PRIVILEGES ON *.* TO root@"%" IDENTIFIED BY "root";
+  mysql > GRANT ALL PRIVILEGES ON *.* TO root@"%" IDENTIFIED BY "root";
 （10）查询数据库编码格式，确保是UTF-8：
     show variables like "%char%";
     set names utf8;

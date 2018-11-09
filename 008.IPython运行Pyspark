@@ -1,0 +1,42 @@
+一、安装Anaconda
+1、复制安装Anaconda的下载地址
+    https://repo.continuum.io/archive/index.html
+2、下载Anaconda2-2.5.0-Linux-x86_64.sh
+    wget https://repo.continuum.io/archive/Anaconda2-2.5.0-Linux-x86_64.sh
+3、安装Anaconda
+    bash Anaconda2-2.5.0-Linux-x86_64.sh -b
+4、编辑环境变量
+#ANACONDA_PATH-----------------------
+export PATH=/root/anaconda2/bin:$PATH
+export ANACONDA_PATH=/root/anaconda2
+export PYSPARK_DRIVER_PYTHON=$ANACONDA_PATH/bin/ipython
+export PYSPARK_PYTHON=$ANACONDA_PATH/bin/python
+5、使环境变量生效
+    source /etc/profile
+6、查看Python版本
+    python --version
+7、按照步骤2~6在data1、data2、data3安装Anaconda
+
+二、在IPython Notebook使用Spark
+1、创建ipynotebook
+    mkdir -p ~/pythonwork/ipynotebook
+    cd ~/pythonwork/ipynotebook
+2、在IPython Notebook界面中运行pyspark
+    PYSPARK_DRIVER_PYTHON=ipython PYSPARK_DRIVER_PYTHON_OPTS="notebook" pyspark
+3、新建一个IPython Notebook
+    单击New，选择Python2
+4、新建的IPython Notebook
+    单击CellToolBar可修改Notebook名称
+5、输入新的Notebook名字
+
+三、在不同模式运行IPython Notebook的命令
+1、在Local启动IPython Notebook
+    cd ~/pythonwork/ipynotebook
+    PYSPARK_DRIVER_PYTHON=ipython PYSPARK_DRIVER_PYTHON_OPTS="notebook" pyspark --master local[*]
+2、在Hadoop Yarn-client模式启动IPython Notebook
+    start-all.sh
+    PYSPARK_DRIVER_PYTHON=ipython PYSPARK_DRIVER_PYTHON_OPTS="notebook" HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop pyspark --master yarn --deploy-mode client
+3、在Spark Stand Alone模式启动IPython Notebook
+    start-all.sh
+    /usr/local/spark/sbin/start-all.sh
+    PYSPARK_DRIVER_PYTHON=ipython PYSPARK_DRIVER_PYTHON_OPTS="notebook" MASTER=spark://master:7077 pyspark --num-executors 1 --total-executor-cores 3 --executor-memory 512m

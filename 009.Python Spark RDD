@@ -1,0 +1,6 @@
+一、开启IPython Notebook
+1、在local模式运行IPython Notebook来使用Spark
+    切换ipynotebook工作目录
+        cd ~/pythonwork/ipynotebook
+    运行IPython Notebook来使用Spark
+        PYSPARK_DRIVER_PYTHON=ipython PYSPARK_DRIVER_PYTHON_OPTS="notebook" pyspark
